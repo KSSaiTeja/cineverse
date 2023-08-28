@@ -54,12 +54,12 @@ const Auth = () => {
             <p className="text-neutral-500 mt-12">
               {variant === "Login"
                 ? "First time using CineVerse?"
-                : "Already have an account"}
+                : "Already have an account?"}
               <span
                 onClick={toggleVariant}
                 className="text-white ml-1 hover:underline cursor-pointer"
               >
-                {variant === "Login" ? "Create an account" : "Login"}
+                {variant === "Login Here" ? "Create an account" : "Login Here"}
               </span>
             </p>
           </div>
