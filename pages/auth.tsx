@@ -1,8 +1,12 @@
 import Input from "@/components/Input";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 
 const Auth = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -10,9 +14,24 @@ const Auth = () => {
 
   const toggleVariant = useCallback(() => {
     setVariant((currentVariant) =>
-      currentVariant === "Login" ? "Register" : "Login"
+      currentVariant === "Login" ? "Register" : "Login",
     );
   }, []);
+
+  const login = useCallback(async () => {
+    try {
+      await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/",
+      });
+
+      router.push("/");
+    } catch (error) {
+      console.log("Error");
+    }
+  }, [email, password, router]);
 
   const register = useCallback(async () => {
     try {
@@ -21,16 +40,24 @@ const Auth = () => {
         name,
         password,
       });
+
+      login();
     } catch (error) {
       console.log("Error");
     }
-  }, [email, name, password]);
+  }, [email, name, password, login]);
 
   return (
     <div className="relative h-full w-full bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
       <div className="bg-black w-full h-full lg:bg-opacity-50">
         <nav className="px-5 py-5">
-          <img src="/images/logo.png" alt="logo" className="h-12" />
+          <Image
+            src="/images/logo.png"
+            alt="logo"
+            className="h-12"
+            width="95"
+            height="12"
+          />
         </nav>
         <div className="flex justify-center">
           <div className="bg-black bg-opacity-70 px-16 py-16 self-center mt-2 lg:w-2/5 lg:max-w-wd rounded-md w-full">
@@ -62,7 +89,7 @@ const Auth = () => {
               />
             </div>
             <button
-              onClick={register}
+              onClick={variant === "login" ? login : register}
               className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition"
             >
               {variant === "Login" ? "Login" : "Sign up"}
